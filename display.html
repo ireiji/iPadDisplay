@@ -26,33 +26,33 @@
   <div id="container"></div>
 
   <script>
-    async function loadMedia() {
-        const res = await fetch("data.json");
-        const data = await res.json();
-        const url = data.url;
+    function loadMedia() {
+      const container = document.getElementById("container");
+      const url = localStorage.getItem("mediaURL");
 
-        const container = document.getElementById("container");
-        container.innerHTML = "";
+      container.innerHTML = "";
 
-        if (!url) {
-            container.innerHTML = "<h1 style='color:white'>No media set</h1>";
-            return;
-        }
+      if (!url) {
+        container.innerHTML = "<h1 style='color:white'>No media set</h1>";
+        return;
+      }
 
-        if (url.endsWith(".mp4")) {
-            container.innerHTML = `
-            <video autoplay loop controls>
-                <source src="${url}" type="video/mp4">
-            </video>
-            `;
-        } else {
-            container.innerHTML = `<img src="${url}">`;
-        }
+      if (url.endsWith(".mp4")) {
+        container.innerHTML = `
+          <video autoplay loop controls>
+            <source src="${url}" type="video/mp4">
+          </video>
+        `;
+      } else {
+        container.innerHTML = `<img src="${url}">`;
+      }
     }
 
     loadMedia();
+
+    // Auto refresh every 2 seconds
     setInterval(loadMedia, 2000);
-</script>
+  </script>
 
 </body>
 </html>
