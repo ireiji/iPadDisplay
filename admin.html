@@ -2,42 +2,41 @@
 <html>
 <head>
   <title>Admin Panel</title>
-  <style>
-    body {
-      font-family: Arial;
-      text-align: center;
-      margin-top: 100px;
-    }
-    input {
-      width: 60%;
-      padding: 10px;
-      font-size: 18px;
-    }
-    button {
-      padding: 10px 20px;
-      font-size: 18px;
-      margin-top: 20px;
-    }
-  </style>
 </head>
 <body>
 
-  <h1>Admin Panel</h1>
+<h1>Admin Panel</h1>
 
-  <input id="mediaInput" placeholder="Paste video or GIF URL here">
-  <br>
-  <button onclick="saveMedia()">CONFIRM</button>
+<input id="mediaInput" placeholder="Enter video or GIF URL">
+<button id="confirmBtn">CONFIRM</button>
 
-  <script>
-    function saveMedia() {
-      const url = document.getElementById("mediaInput").value;
+<!-- Correct Supabase CDN -->
+<script type="module">
+  // Import Supabase properly
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-      // OPTION A: localStorage
-      localStorage.setItem("mediaURL", url);
+  const supabaseUrl = "https://iknwqjibynjonuraflxx.supabase.co";
+  const supabaseKey = "sb_publishable_C8ohNDrYHdoznd80cSZ9GA__DOubJMV";
+  const supabase = createClient(supabaseUrl, supabaseKey);
 
-      alert("Saved! Now open display.html");
+  async function updateMedia() {
+    const url = document.getElementById("mediaInput").value;
+
+    const { error } = await supabase
+      .from("media")
+      .update({ url: url })
+      .eq("id", 1);
+
+    if (error) {
+      alert("Error: " + error.message);
+    } else {
+      alert("Updated!");
     }
-  </script>
+  }
+
+  // Connect button to function
+  document.getElementById("confirmBtn").addEventListener("click", updateMedia);
+</script>
 
 </body>
 </html>
