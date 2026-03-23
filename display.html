@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Display Screen</title>
+  <title>Display</title>
 
-  <!-- iPad fullscreen support -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="apple-mobile-web-app-capable" content="yes">
 
@@ -11,7 +10,6 @@
     body {
       margin: 0;
       background: black;
-      overflow: hidden;
     }
 
     video, img {
@@ -23,36 +21,58 @@
 </head>
 <body>
 
-  <div id="container"></div>
+<div id="container"></div>
 
-  <script>
-    function loadMedia() {
-      const container = document.getElementById("container");
-      const url = localStorage.getItem("mediaURL");
+<!-- Use type="module" for Supabase JS -->
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-      container.innerHTML = "";
+  const supabaseUrl = "https://iknwqjibynjonuraflxx.supabase.co";
+  const supabaseKey = "sb_publishable_C8ohNDrYHdoznd80cSZ9GA__DOubJMV";
+  const supabase = createClient(supabaseUrl, supabaseKey);
 
-      if (!url) {
-        container.innerHTML = "<h1 style='color:white'>No media set</h1>";
-        return;
-      }
+  const container = document.getElementById("container");
 
-      if (url.endsWith(".mp4")) {
-        container.innerHTML = `
-          <video autoplay loop controls>
-            <source src="${url}" type="video/mp4">
-          </video>
-        `;
-      } else {
-        container.innerHTML = `<img src="${url}">`;
-      }
+  // Function to render media
+  function renderMedia(url) {
+    container.innerHTML = '';
+    if (!url) {
+      container.innerHTML = "<h1 style='color:white'>No media set</h1>";
+      return;
     }
+    if (url.endsWith('.mp4')) {
+      container.innerHTML = `
+        <video autoplay loop controls>
+          <source src="${url}" type="video/mp4">
+        </video>
+      `;
+    } else {
+      container.innerHTML = `<img src="${url}">`;
+    }
+  }
 
-    loadMedia();
+  // Initial load
+  async function loadMedia() {
+    const { data } = await supabase
+      .from('media')
+      .select('*')
+      .eq('id', 1)
+      .single();
+    if (data) renderMedia(data.url);
+  }
 
-    // Auto refresh every 2 seconds
-    setInterval(loadMedia, 2000);
-  </script>
+  loadMedia();
+
+  // Realtime subscription for updates
+  supabase
+    .channel('media_updates')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'media' }, payload => {
+      if (payload.new.id === 1) {
+        renderMedia(payload.new.url);
+      }
+    })
+    .subscribe();
+</script>
 
 </body>
 </html>
