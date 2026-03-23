@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Panel</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      margin-top: 100px;
+    }
+    input {
+      width: 60%;
+      padding: 10px;
+      font-size: 18px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Admin Panel</h1>
+
+  <input id="mediaInput" placeholder="Paste video or GIF URL here">
+  <br>
+  <button onclick="saveMedia()">CONFIRM</button>
+
+  <script>
+    function saveMedia() {
+      const url = document.getElementById("mediaInput").value;
+
+      // OPTION A: localStorage
+      localStorage.setItem("mediaURL", url);
+
+      alert("Saved! Now open display.html");
+    }
+  </script>
+
+</body>
+</html>

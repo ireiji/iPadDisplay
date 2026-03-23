@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Display Screen</title>
+
+  <!-- iPad fullscreen support -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      overflow: hidden;
+    }
+
+    video, img {
+      width: 100vw;
+      height: 100vh;
+      object-fit: contain;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="container"></div>
+
+  <script>
+    async function loadMedia() {
+        const res = await fetch("data.json");
+        const data = await res.json();
+        const url = data.url;
+
+        const container = document.getElementById("container");
+        container.innerHTML = "";
+
+        if (!url) {
+            container.innerHTML = "<h1 style='color:white'>No media set</h1>";
+            return;
+        }
+
+        if (url.endsWith(".mp4")) {
+            container.innerHTML = `
+            <video autoplay loop controls>
+                <source src="${url}" type="video/mp4">
+            </video>
+            `;
+        } else {
+            container.innerHTML = `<img src="${url}">`;
+        }
+    }
+
+    loadMedia();
+    setInterval(loadMedia, 2000);
+</script>
+
+</body>
+</html>
